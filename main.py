@@ -4,10 +4,6 @@ from tkinter import filedialog as fd
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 
 FONT = ImageFont.truetype(font="Futura Md BT Bold.ttf", size=60)
-CANVAS_W = 600
-CANVAS_H = 336
-PREVIEW_W = 650
-PREVIEW_H = 650
 file_path = None
 img = None
 
@@ -24,7 +20,6 @@ def open_file():
         initialdir="/",
         filetypes=filetypes
     )
-    print(file_path)
     path_to_img.config(text="File loaded", fg="green")
 
 
@@ -33,9 +28,9 @@ def show_img():
     preview_window.title("Photo Preview")
     # If no image selected
     if file_path is None:
-        preview_window.minsize(width=PREVIEW_W, height=PREVIEW_H)
+        preview_window.minsize(width=300, height=200)
         error_label = Label(preview_window, text="No photo selected", fg="red")
-        error_label.place(x=PREVIEW_W / 2, y=PREVIEW_H / 2, anchor=CENTER)
+        error_label.place(x=150, y=100, anchor=CENTER)
         path_to_img.config(text="No photo selected, try again", fg="red")
     # If image is selected
     else:
@@ -54,14 +49,15 @@ def show_img():
         canvas_h = round(canvas_w * aspect_ratio)
         preview_h = canvas_h + 20
         pill_img = pill_img.resize((canvas_w, canvas_h), Image.ANTIALIAS)
-        img = ImageTk.PhotoImage(pill_img)
+        preview_img = ImageTk.PhotoImage(pill_img)
         # Setting window size
         preview_window.minsize(width=preview_w, height=preview_h)
         # Creating Canvas and placing image on it
-        canvas = Canvas(preview_window, width=canvas_w, height=canvas_h)
-        canvas.place(x=preview_w / 2, y=preview_h / 2, anchor=CENTER)
-        canvas_img = canvas.create_image(
-            canvas_w / 2, canvas_h / 2, image=img, anchor=CENTER)
+        preview_canvas = Canvas(
+            preview_window, width=canvas_w, height=canvas_h)
+        preview_canvas.place(x=preview_w / 2, y=preview_h / 2, anchor=CENTER)
+        preview_canvas_img = preview_canvas.create_image(
+            canvas_w / 2, canvas_h / 2, image=preview_img, anchor=CENTER)
     preview_window.mainloop()
 
 
@@ -81,53 +77,45 @@ def add_watermark():
 
 
 def show_result():
-    new_window = Toplevel(app)
-    new_window.title("Result Preview")
+    result_window = Toplevel(app)
+    result_window.title("Result Preview")
     # If no watermak added
     if img is None:
-        new_window.minsize(width=PREVIEW_W, height=PREVIEW_H)
-        error_label = Label(new_window, text="No watermark added", fg="red")
-        error_label.place(x=PREVIEW_W / 2, y=PREVIEW_H / 2, anchor=CENTER)
+        result_window.minsize(width=300, height=200)
+        error_label = Label(result_window, text="No watermark added", fg="red")
+        error_label.place(x=150, y=100, anchor=CENTER)
         result_label.config(
             text="Please type text for watermark", fg="red")
     # If watermark added
     else:
-
+        # Get image resolution
         w, h = img.size
         aspect_ratio = h / w
-        if w > h:
-            new_w = CANVAS_W - 20
-            new_h = round(new_w * aspect_ratio)
-            img_resized = img.resize((new_w, new_h), Image.ANTIALIAS)
-            watermarked_img = ImageTk.PhotoImage(img_resized)
-
-            new_window.minsize(width=PREVIEW_W, height=PREVIEW_H + 50)
-
-            canvas2 = Canvas(new_window, width=CANVAS_W, height=CANVAS_H)
-            canvas2.place(x=PREVIEW_W / 2, y=PREVIEW_H / 2, anchor=CENTER)
-            canvas_img = canvas2.create_image(
-                CANVAS_W / 2, CANVAS_H / 2, image=watermarked_img, anchor=CENTER)
-            save_btn = Button(new_window, text="Save Result As",
-                              command=save_result)
-            save_btn.place(x=PREVIEW_W / 2, y=PREVIEW_H + 20, anchor=CENTER)
+        # Setting window height for horizontal or rectangle images
+        if w >= h:
+            preview_w = 650
+        # Setting window height for verttical images
         else:
-            new_w = CANVAS_H - 20
-            new_h = round(new_w * aspect_ratio)
-            img_resized = img.resize((new_w, new_h), Image.ANTIALIAS)
-            watermarked_img = ImageTk.PhotoImage(img_resized)
-
-            new_window.minsize(width=PREVIEW_H, height=PREVIEW_W + 50)
-
-            canvas2 = Canvas(new_window, width=CANVAS_H, height=CANVAS_W)
-            canvas2.place(x=PREVIEW_H / 2, y=PREVIEW_W / 2, anchor=CENTER)
-            canvas_img = canvas2.create_image(
-                CANVAS_H / 2, CANVAS_W / 2, image=watermarked_img, anchor=CENTER)
-            save_btn = Button(new_window, text="Save Result As",
-                              command=save_result)
-            save_btn.place(x=PREVIEW_H / 2, y=PREVIEW_W + 20, anchor=CENTER)
-
-    new_window.mainloop()
-    pass
+            preview_w = 350
+        # Resizing image to fit new window and setting Canvas size and window height
+        canvas_w = preview_w - 20
+        canvas_h = round(canvas_w * aspect_ratio)
+        preview_h = canvas_h + 50
+        img_resized = img.resize((canvas_w, canvas_h), Image.ANTIALIAS)
+        watermarked_img = ImageTk.PhotoImage(img_resized)
+        # Setting window size
+        result_window.minsize(width=preview_w, height=preview_h)
+        # Creating Canvas and placing image on it
+        result_canvas = Canvas(result_window, width=canvas_w, height=canvas_h)
+        result_canvas.place(
+            x=preview_w / 2, y=(preview_h - 30) / 2, anchor=CENTER)
+        result_canvas_img = result_canvas.create_image(
+            canvas_w / 2, canvas_h / 2, image=watermarked_img, anchor=CENTER)
+        # Btn to save watermarked image as file
+        save_btn = Button(result_window, text="Save Result As",
+                          command=save_result)
+        save_btn.place(x=preview_w / 2, y=preview_h - 25, anchor=CENTER)
+    result_window.mainloop()
 
 
 def save_result():
