@@ -29,8 +29,6 @@ def open_file():
 
 
 def show_img():
-    global file_path
-
     preview_window = Toplevel(app)
     preview_window.title("Photo Preview")
     # If no image selected
@@ -45,39 +43,25 @@ def show_img():
         pill_img = Image.open(file_path)
         w, h = pill_img.size
         aspect_ratio = h / w
-        # Display horizontal or rectangle images
+        # Setting window height for horizontal or rectangle images
         if w >= h:
             preview_w = 650
-            # Resizing image to fit new window and setting Canvas size and window height
-            canvas_w = preview_w - 20
-            canvas_h = round(canvas_w * aspect_ratio)
-            preview_h = canvas_h + 20
-            pill_img = pill_img.resize((canvas_w, canvas_h), Image.ANTIALIAS)
-            img = ImageTk.PhotoImage(pill_img)
-
-            preview_window.minsize(width=preview_w, height=preview_h)
-
-            canvas2 = Canvas(preview_window, width=canvas_w, height=canvas_h)
-            canvas2.place(x=preview_w / 2, y=preview_h / 2, anchor=CENTER)
-            canvas_img = canvas2.create_image(
-                canvas_w / 2, canvas_h / 2, image=img, anchor=CENTER)
-        # Display vertical images
+        # Setting window height for verttical images
         else:
             preview_w = 350
-            # Resizing image to fit new window and setting Canvas size and window height
-            canvas_w = preview_w - 20
-            canvas_h = round(canvas_w * aspect_ratio)
-            preview_h = canvas_h + 20
-            pill_img = pill_img.resize((canvas_w, canvas_h), Image.ANTIALIAS)
-            img = ImageTk.PhotoImage(pill_img)
-
-            preview_window.minsize(width=preview_w, height=preview_h)
-
-            canvas2 = Canvas(preview_window, width=canvas_w, height=canvas_h)
-            canvas2.place(x=preview_w / 2, y=preview_h / 2, anchor=CENTER)
-            canvas_img = canvas2.create_image(
-                canvas_w / 2, canvas_h / 2, image=img, anchor=CENTER)
-
+        # Resizing image to fit new window and setting Canvas size and window height
+        canvas_w = preview_w - 20
+        canvas_h = round(canvas_w * aspect_ratio)
+        preview_h = canvas_h + 20
+        pill_img = pill_img.resize((canvas_w, canvas_h), Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(pill_img)
+        # Setting window size
+        preview_window.minsize(width=preview_w, height=preview_h)
+        # Creating Canvas and placing image on it
+        canvas = Canvas(preview_window, width=canvas_w, height=canvas_h)
+        canvas.place(x=preview_w / 2, y=preview_h / 2, anchor=CENTER)
+        canvas_img = canvas.create_image(
+            canvas_w / 2, canvas_h / 2, image=img, anchor=CENTER)
     preview_window.mainloop()
 
 
@@ -99,14 +83,14 @@ def add_watermark():
 def show_result():
     new_window = Toplevel(app)
     new_window.title("Result Preview")
-
+    # If no watermak added
     if img is None:
         new_window.minsize(width=PREVIEW_W, height=PREVIEW_H)
         error_label = Label(new_window, text="No watermark added", fg="red")
         error_label.place(x=PREVIEW_W / 2, y=PREVIEW_H / 2, anchor=CENTER)
         result_label.config(
             text="Please type text for watermark", fg="red")
-
+    # If watermark added
     else:
 
         w, h = img.size
