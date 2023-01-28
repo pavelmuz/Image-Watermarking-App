@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import filedialog as fd
 
+import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 
 FONT = ImageFont.truetype(font="Futura Md BT Bold.ttf", size=60)
@@ -61,7 +62,7 @@ def show_img():
     preview_window.mainloop()
 
 
-def add_watermark():
+def add_text_watermark():
     global img
     # # If no image selected
     if file_path is None:
@@ -131,6 +132,34 @@ def save_result():
         img.save(img_name)
 
 
+def open_logo():
+    global logo_path
+    filetypes = (
+        ("Image files", "*.jpg"),
+        ("PNG files", "*.png"),
+        ("all files", "*.*")
+    )
+    logo_path = fd.askopenfilename(
+        title="Open image",
+        initialdir="/",
+        filetypes=filetypes
+    )
+    logo_result_label.config(text="Logo image loaded", fg="green")
+
+
+def add_image_watermark():
+    # # If no image selected
+    if file_path is None:
+        path_to_img.config(text="No photo selected, try again", fg="red")
+    else:
+        img = Image.open(file_path)
+        img_w, img_h = img.size
+        logo_img = Image.open(logo_path)
+        logo_w, logo_h = logo_img.size
+        img.paste(im=logo_img, box=(img_w - logo_w - 20, img_h - logo_h - 20))
+        img.save("test.jpg")
+
+
 app = Tk()
 app.title("Image Watermarking")
 app.minsize(width=400, height=300)
@@ -153,7 +182,7 @@ watermark_entry.grid(row=3, column=0, columnspan=4)
 result_label = Label(text="")
 result_label.grid(row=4, column=0, columnspan=3)
 
-watermark_brn = Button(text="Add Watermark", command=add_watermark)
+watermark_brn = Button(text="Add Watermark", command=add_text_watermark)
 watermark_brn.grid(row=5, column=0)
 
 result_btn = Button(text="Show Result", command=show_result)
@@ -162,11 +191,15 @@ result_btn.grid(row=5, column=1)
 img_watermark_label = Label(text="Select logo for watermarking")
 img_watermark_label.grid(row=6, column=0)
 
-logo_select_btn = Button(text="Browse Logo")
+logo_select_btn = Button(text="Browse Logo", command=open_logo)
 logo_select_btn.grid(row=7, column=0)
 
-add_img_watermark_btn = Button(text="Add Img Logo")
-add_img_watermark_btn.grid(row=7, column=1)
+logo_result_label = Label(text="")
+logo_result_label.grid(row=8, column=0, columnspan=3)
+
+add_img_watermark_btn = Button(
+    text="Add Img Logo", command=add_image_watermark)
+add_img_watermark_btn.grid(row=9, column=0)
 
 
 app.mainloop()
