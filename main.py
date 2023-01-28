@@ -12,7 +12,6 @@ def open_file():
     global file_path
     filetypes = (
         ("Image files", "*.jpg"),
-        ("PNG files", "*.png"),
         ("all files", "*.*")
     )
     file_path = fd.askopenfilename(
@@ -151,12 +150,14 @@ def watermark_type():
 
 app = Tk()
 app.title("Image Watermarking")
-app.minsize(width=400, height=300)
+app.minsize(width=400, height=200)
+app.config(padx=30, pady=30)
 
-open_btn = Button(text="Browse Files", command=open_file)
+open_btn = Button(text="Browse Files", command=open_file, width=10)
 open_btn.grid(row=0, column=0)
 
-show_btn = Button(text="Preview Image", command=show_img, state="disabled")
+show_btn = Button(text="Preview Image", command=show_img,
+                  state="disabled", width=10)
 show_btn.grid(row=0, column=1)
 
 path_to_img = Label(text="")
@@ -172,7 +173,7 @@ logo_watermark_btn = Radiobutton(
     text="Add logo watermark", variable=choice, value="logo", command=watermark_type, state="disabled")
 logo_watermark_btn.grid(row=2, column=1)
 
-text_watermark_label = Label(text="Type in text for watermark:")
+text_watermark_label = Label(text="Type in text for watermark")
 text_watermark_label.grid(row=3, column=0)
 
 img_watermark_label = Label(text="Select logo for watermarking")
@@ -182,20 +183,22 @@ watermark_entry = Entry(width=20, state="disabled")
 watermark_entry.grid(row=4, column=0)
 
 logo_select_btn = Button(
-    text="Browse Logo", command=open_logo, state="disabled")
+    text="Browse Logo", command=open_logo, state="disabled", width=10)
 logo_select_btn.grid(row=4, column=1)
 
 result_label = Label(text="")
 result_label.grid(row=5, column=0, columnspan=3)
 
 watermark_btn = Button(text="Add Watermark",
-                       command=add_watermark, state="disabled")
+                       command=add_watermark, state="disabled", width=10)
 watermark_btn.grid(row=6, column=0, columnspan=2)
 
-result_btn = Button(text="Show Result", command=show_result, state="disabled")
+result_btn = Button(text="Show Result", command=show_result,
+                    state="disabled", width=10)
 result_btn.grid(row=7, column=0, columnspan=2)
 
-save_btn = Button(text="Save Result As", command=save_result, state="disabled")
+save_btn = Button(text="Save Result As", command=save_result,
+                  state="disabled", width=10)
 save_btn.grid(row=8, column=0, columnspan=2)
 
 app.mainloop()
