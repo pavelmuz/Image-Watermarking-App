@@ -63,6 +63,7 @@ def show_img():
 
 def add_watermark():
     global img
+    # # If no image selected
     if file_path is None:
         path_to_img.config(text="No photo selected, try again", fg="red")
     else:
